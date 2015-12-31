@@ -2,7 +2,7 @@
 
 **Language**: C
 
-**Dependencies**: libm (can be ommitted if `QFPC_SIN` and `QFPC_COS` are defined with custom functions)
+**Dependencies**: libm (can be omitted if `QFPC_SIN` and `QFPC_COS` are defined with custom functions)
 
 Tested only on Linux so far.
 
