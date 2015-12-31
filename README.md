@@ -1,6 +1,8 @@
-License: Public domain
-Language: C
-Dependencies: SDL2
+**License**: Public domain
+
+**Language**: C
+
+**Dependencies**: SDL2
 
 Tested only on Linux so far.
 
