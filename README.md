@@ -1,3 +1,5 @@
+**Description**: Single-file C implementation of first-person quaternion camera used in such video game genres like FPS.
+
 **License**: Public domain
 
 **Language**: C
