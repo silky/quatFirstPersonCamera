@@ -2,9 +2,11 @@
 
 **Language**: C
 
-**Dependencies**: SDL2
+**Dependencies**: libm (can be ommitted if `QFPC_SIN` and `QFPC_COS` are defined with custom functions)
 
 Tested only on Linux so far.
+
+An example for SDL2:
 
 ```c
 #define QFPC_IMPLEMENTATION
