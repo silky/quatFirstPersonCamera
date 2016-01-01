@@ -1,38 +1,35 @@
-// cc main.c -lSDL2 -lGLEW -lGL -lm -o app
+// cc main.c `pkg-config --static --libs glfw3` -lGLEW -lGL -lm -o app
 
 #include <math.h>
 #include <stdio.h>
 #include <GL/glew.h>
-#include <SDL2/SDL.h>
+#include <GLFW/glfw3.h>
 
 #define QFPC_IMPLEMENTATION
 #include "../../qfpc.h"
 
-#include "torus.h"
+#include "suzanne.h"
 
 void CreatePerspectiveProjection(float * proj, float aspect, float fov_y_rad, float n, float f);
-float GetAspectRatio(SDL_Window * sdl_window);
+float GetAspectRatio(GLFWwindow * glfw_window);
 
 GLuint CreateProgram(const char * vert_filepath, const char * frag_filepath);
 GLuint CreateShader(GLenum shader_type, const char * shader_filepath);
 
 int main()
 {
-  SDL_Init(SDL_INIT_VIDEO);
-
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-  SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+  glfwInit();
   
-  SDL_Window * sdl_window = SDL_CreateWindow(
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+  glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+
+  GLFWwindow * glfw_window = glfwCreateWindow(
+    800, 600,    
     "quatFirstPersonCamera",
-    SDL_WINDOWPOS_CENTERED,
-    SDL_WINDOWPOS_CENTERED,
-    800, 600,
-    SDL_WINDOW_OPENGL
+    NULL, NULL
   );
 
-  SDL_GLContext sdl_glcontext = SDL_GL_CreateContext(sdl_window);
-  SDL_GL_MakeCurrent(sdl_window, sdl_glcontext);
+  glfwMakeContextCurrent(glfw_window);
 
   glewExperimental = GL_TRUE;
   GLenum glew_status = glewInit();
@@ -49,10 +46,10 @@ int main()
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  GLuint torus_bo;
-  glGenBuffers(1, &torus_bo);
-  glBindBuffer(GL_ARRAY_BUFFER, torus_bo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(torus), torus, GL_STATIC_DRAW);
+  GLuint suzanne_bo;
+  glGenBuffers(1, &suzanne_bo);
+  glBindBuffer(GL_ARRAY_BUFFER, suzanne_bo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(suzanne), suzanne, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -62,63 +59,53 @@ int main()
   float cam_prj[4] = {};
 
   CreatePerspectiveProjection(
-    cam_prj, GetAspectRatio(sdl_window),
+    cam_prj, GetAspectRatio(glfw_window),
     85.0f * QFPC_TO_RAD,
     0.01f, 1000.f
   );
 
-  SDL_ShowCursor(0);
+  glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   int win_w, win_h;
-  SDL_GetWindowSize(sdl_window, &win_w, &win_h);
-  SDL_WarpMouseInWindow(sdl_window, win_w/2, win_h/2);
+  glfwGetWindowSize(glfw_window, &win_w, &win_h);
+  glfwSetCursorPos(glfw_window, win_w/2, win_h/2);
 
-  while(1)
+  while(!glfwWindowShouldClose(glfw_window))
   {
-    SDL_PumpEvents();
-    int mouse_x, mouse_y;
-    SDL_GetMouseState(&mouse_x, &mouse_y);
-    const Uint8 * key = SDL_GetKeyboardState(NULL);
-    SDL_WarpMouseInWindow(sdl_window, win_w/2, win_h/2);
+    glfwPollEvents();
+    double mouse_x, mouse_y;
+    glfwGetCursorPos(glfw_window, &mouse_x, &mouse_y);
+    glfwSetCursorPos(glfw_window, win_w/2, win_h/2);
 
     quatFirstPersonCamera(
       cam_pos, cam_rot,
       mouse_x, mouse_y,
       win_w/2, win_h/2,
       0.1f, 0.05f,
-      key[SDL_SCANCODE_W],
-      key[SDL_SCANCODE_A],
-      key[SDL_SCANCODE_S],
-      key[SDL_SCANCODE_D],
-      key[SDL_SCANCODE_E],
-      key[SDL_SCANCODE_Q]
+      glfwGetKey(glfw_window, GLFW_KEY_W),
+      glfwGetKey(glfw_window, GLFW_KEY_A),
+      glfwGetKey(glfw_window, GLFW_KEY_S),
+      glfwGetKey(glfw_window, GLFW_KEY_D),
+      glfwGetKey(glfw_window, GLFW_KEY_E),
+      glfwGetKey(glfw_window, GLFW_KEY_Q)
     );
 
     glProgramUniform3fv(program, 0, 1, cam_pos);
     glProgramUniform4fv(program, 1, 1, cam_rot);
     glProgramUniform4fv(program, 2, 1, cam_prj);
 
-    SDL_Event event;
-    while(SDL_PollEvent(&event))
-    {
-      switch(event.type)
-      {
-        case(SDL_QUIT): goto exit;
-      }
-    }
-
     glClear(GL_COLOR_BUFFER_BIT);
     glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glUseProgram(program);
-    glDrawArrays(GL_TRIANGLES, 0, sizeof(torus) / sizeof(float) / 3);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(suzanne) / sizeof(float) / 3);
 
-    SDL_GL_SwapWindow(sdl_window);
+    glfwSwapBuffers(glfw_window);
   }
 
   exit:
 
-  SDL_GL_DeleteContext(sdl_glcontext);
-  SDL_Quit();
+  glfwDestroyWindow(glfw_window);
+  glfwTerminate();
   
   return 0;
 }
@@ -137,10 +124,10 @@ void CreatePerspectiveProjection(
   proj[3] = (2.f * n * f) / (n - f);
 }
 
-float GetAspectRatio(SDL_Window * sdl_window)
+float GetAspectRatio(GLFWwindow * glfw_window)
 {
   int w, h;
-  SDL_GetWindowSize(sdl_window, &w, &h);
+  glfwGetWindowSize(glfw_window, &w, &h);
   return w / (float)h;
 }
 
