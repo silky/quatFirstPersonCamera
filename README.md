@@ -6,8 +6,10 @@
 
 **Dependencies**: libm (can be omitted if custom `QFPC_SIN` and `QFPC_COS` are defined)
 
-Example for SDL2:
------------------
+[Example for SDL2](https://github.com/procedural/quatFirstPersonCamera/tree/master/examples/sdl2_opengl3_example)
+------------------
+
+<img width="500px" src="http://i.imgur.com/nZD5kKI.gif" />
 
 ```c
 #define QFPC_IMPLEMENTATION
@@ -53,8 +55,10 @@ int main()
 }
 ```
 
-Example for GLFW3:
-------------------
+[Example for GLFW3](https://github.com/procedural/quatFirstPersonCamera/tree/master/examples/glfw3_opengl3_example)
+-------------------
+
+<img width="500px" src="http://i.imgur.com/tQ0KafS.gif" />
 
 ```c
 #define QFPC_IMPLEMENTATION
