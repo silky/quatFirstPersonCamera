@@ -3,10 +3,10 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
-#include "torus.h"
-
 #define QFPC_IMPLEMENTATION
 #include "../../qfpc.h"
+
+#include "torus.h"
 
 void CreatePerspectiveProjection(float * proj, float aspect, float fov_y_rad, float n, float f);
 float GetAspectRatio(SDL_Window * sdl_window);

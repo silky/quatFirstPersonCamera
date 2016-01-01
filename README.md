@@ -4,9 +4,7 @@
 
 **Language**: C
 
-**Dependencies**: libm (can be omitted if `QFPC_SIN` and `QFPC_COS` are defined with custom functions)
-
-Tested only on Linux so far.
+**Dependencies**: libm (can be omitted if custom `QFPC_SIN` and `QFPC_COS` are defined)
 
 An example for SDL2:
 
@@ -16,10 +14,10 @@ An example for SDL2:
 
 int main()
 {
-  /* SDL2 initialization ... */
+  /* Application init */
   
-  /* vec3 cam_pos = init ... */
-  /* quat cam_rot = init ... */
+  /* float cam_pos[3] init */
+  /* float cam_rot[4] init */
 
   SDL_ShowCursor(0);
   int win_w, win_h;
@@ -47,9 +45,9 @@ int main()
       key[SDL_SCANCODE_Q]
     );
 
-    /* Now cam_pos and cam_rot are ready to be used in GLSL */
+    /* Now cam_pos and cam_rot can be passed to a shader */
 
-    /* The rest of application loop ... */
+    /* The rest of application */
   }
 }
 ```
