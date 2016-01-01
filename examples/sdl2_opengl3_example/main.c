@@ -57,6 +57,8 @@ int main()
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
+  glClearColor(168 / 255.f, 204 / 255.f, 207 / 255.f, 1.f);
+
   float cam_pos[3] = {};
   float cam_rot[4] = { [3] = 1.f };
   float cam_prj[4] = {};
