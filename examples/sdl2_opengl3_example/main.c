@@ -1,4 +1,4 @@
-// cc main.c -lSDL2 -lGLEW -lGL -o app
+// cc main.c -lSDL2 -lGLEW -lGL -lm -o app
 
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
