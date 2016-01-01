@@ -3,6 +3,14 @@
 #include <GL/glew.h>
 #include <SDL2/SDL.h>
 
+#include "torus.h"
+
+#define QFPC_IMPLEMENTATION
+#include "../../qfpc.h"
+
+void CreatePerspectiveProjection(float * proj, float aspect, float fov_y_rad, float n, float f);
+float GetAspectRatio(SDL_Window * sdl_window);
+
 GLuint CreateProgram(const char * vert_filepath, const char * frag_filepath);
 GLuint CreateShader(GLenum shader_type, const char * shader_filepath);
 
@@ -32,35 +40,60 @@ int main()
   }
   glGetError();
   
-  float triangle[] = {
-    // Vertex positions
-    0.0f,  0.5f,  0.0f,  1.0f,
-    0.5f, -0.5f,  0.0f,  1.0f,
-   -0.5f, -0.5f,  0.0f,  1.0f,
-    // Vertex colors
-    1.0f,  0.0f,  0.0f,  1.0f,
-    0.0f,  1.0f,  0.0f,  1.0f,
-    0.0f,  0.0f,  1.0f,  1.0f   
-  };
-  
   GLuint program = CreateProgram("vs.vert", "fs.frag");
   
   GLuint vao;
   glGenVertexArrays(1, &vao);
   glBindVertexArray(vao);
 
-  GLuint triangle_bo;
-  glGenBuffers(1, &triangle_bo);
-  glBindBuffer(GL_ARRAY_BUFFER, triangle_bo);
-  glBufferData(GL_ARRAY_BUFFER, sizeof(triangle), triangle, GL_STATIC_DRAW);
+  GLuint torus_bo;
+  glGenBuffers(1, &torus_bo);
+  glBindBuffer(GL_ARRAY_BUFFER, torus_bo);
+  glBufferData(GL_ARRAY_BUFFER, sizeof(torus), torus, GL_STATIC_DRAW);
   glEnableVertexAttribArray(0);
-  glEnableVertexAttribArray(1);
-  glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 0, 0);
-  glVertexAttribPointer(1, 4, GL_FLOAT, GL_FALSE, 0, (void *)48);
+  glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
-  
+
+  float cam_pos[3] = {};
+  float cam_rot[4] = { [3] = 1.f };
+  float cam_prj[4] = {};
+
+  CreatePerspectiveProjection(
+    cam_prj, GetAspectRatio(sdl_window),
+    85.0f * QFPC_TO_RAD,
+    0.01f, 1000.f
+  );
+
+  SDL_ShowCursor(0);
+  int win_w, win_h;
+  SDL_GetWindowSize(sdl_window, &win_w, &win_h);
+  SDL_WarpMouseInWindow(sdl_window, win_w/2, win_h/2);
+
   while(1)
   {
+    SDL_PumpEvents();
+    int mouse_x, mouse_y;
+    SDL_GetMouseState(&mouse_x, &mouse_y);
+    const Uint8 * key = SDL_GetKeyboardState(NULL);
+    SDL_WarpMouseInWindow(sdl_window, win_w/2, win_h/2);
+
+    quatFirstPersonCamera(
+      cam_pos, cam_rot,
+      mouse_x, mouse_y,
+      win_w/2, win_h/2,
+      0.1f, 0.05f,
+      key[SDL_SCANCODE_W],
+      key[SDL_SCANCODE_A],
+      key[SDL_SCANCODE_S],
+      key[SDL_SCANCODE_D],
+      key[SDL_SCANCODE_E],
+      key[SDL_SCANCODE_Q]
+    );
+
+    glProgramUniform3fv(program, 0, 1, cam_pos);
+    glProgramUniform4fv(program, 1, 1, cam_rot);
+    glProgramUniform4fv(program, 2, 1, cam_prj);
+
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
@@ -71,9 +104,10 @@ int main()
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
+    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
     glUseProgram(program);
-    glDrawArrays(GL_TRIANGLES, 0, 3);
+    glDrawArrays(GL_TRIANGLES, 0, sizeof(torus) / sizeof(float) / 3);
 
     SDL_GL_SwapWindow(sdl_window);
   }
@@ -84,6 +118,27 @@ int main()
   SDL_Quit();
   
   return 0;
+}
+
+void CreatePerspectiveProjection(
+  float * proj,
+  float aspect,
+  float fov_y_rad,
+  float n,
+  float f)
+{
+  float d = 1.f / tanf(fov_y_rad * 0.5f);
+  proj[0] = d / aspect;
+  proj[1] = d;
+  proj[2] = (n + f) / (n - f);
+  proj[3] = (2.f * n * f) / (n - f);
+}
+
+float GetAspectRatio(SDL_Window * sdl_window)
+{
+  int w, h;
+  SDL_GetWindowSize(sdl_window, &w, &h);
+  return w / (float)h;
 }
 
 GLuint CreateProgram(const char * vert_filepath, const char * frag_filepath)
