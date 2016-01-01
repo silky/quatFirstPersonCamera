@@ -7,7 +7,7 @@
 **Dependencies**: libm (can be omitted if custom `QFPC_SIN` and `QFPC_COS` are defined)
 
 Example for SDL2:
-=================
+-----------------
 
 ```c
 #define QFPC_IMPLEMENTATION
@@ -54,7 +54,7 @@ int main()
 ```
 
 Example for GLFW3:
-==================
+------------------
 
 ```c
 #define QFPC_IMPLEMENTATION
