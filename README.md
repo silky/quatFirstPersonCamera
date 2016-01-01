@@ -70,8 +70,11 @@ int main()
   glfwSetInputMode(glfw_window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
   int win_w, win_h;
   glfwGetWindowSize(glfw_window, &win_w, &win_h);
-  glfwPollEvents();
-  glfwSetCursorPos(glfw_window, win_w/2, win_h/2);
+  for(int i = 0; i < 2; ++i)
+  {
+    glfwPollEvents();
+    glfwSetCursorPos(glfw_window, win_w/2, win_h/2);
+  }
 
   while(!glfwWindowShouldClose(glfw_window))
   {
