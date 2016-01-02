@@ -66,8 +66,7 @@ int main()
 
   CreatePerspectiveProjection(
     cam_prj, GetAspectRatio(sdl_window),
-    85.0f * QFPC_TO_RAD,
-    0.01f, 1000.f
+    85.0f * QFPC_TO_RAD, 0.01f, 1000.f
   );
 
   SDL_ShowCursor(0);
@@ -85,9 +84,9 @@ int main()
 
     quatFirstPersonCamera(
       cam_pos, cam_rot,
-      mouse_x, mouse_y,
-      win_w/2, win_h/2,
       0.1f, 0.05f,
+      win_w/2, win_h/2,
+      mouse_x, mouse_y,
       key[SDL_SCANCODE_W],
       key[SDL_SCANCODE_A],
       key[SDL_SCANCODE_S],

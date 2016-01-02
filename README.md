@@ -37,9 +37,9 @@ int main()
     
     quatFirstPersonCamera(
       cam_pos, cam_rot,
-      mouse_x, mouse_y,
-      win_w/2, win_h/2,
       0.1f, 0.05f,
+      win_w/2, win_h/2,
+      mouse_x, mouse_y,
       key[SDL_SCANCODE_W],
       key[SDL_SCANCODE_A],
       key[SDL_SCANCODE_S],
@@ -89,9 +89,9 @@ int main()
 
     quatFirstPersonCamera(
       cam_pos, cam_rot,
-      mouse_x, mouse_y,
-      win_w/2, win_h/2,
       0.1f, 0.05f,
+      win_w/2, win_h/2,
+      mouse_x, mouse_y,
       glfwGetKey(glfw_window, GLFW_KEY_W),
       glfwGetKey(glfw_window, GLFW_KEY_A),
       glfwGetKey(glfw_window, GLFW_KEY_S),

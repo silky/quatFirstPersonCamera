@@ -54,18 +54,18 @@ void qfpcV3Rotq(float * result, const float * v, const float * q);
 void quatFirstPersonCamera(
   float * camera_vec3_position,
   float * camera_quat_rotation,
-  int mouse_x,
-  int mouse_y,
-  int window_middle_x,
-  int window_middle_y,
   float look_multiplier,
   float move_multiplier,
-  int key_forward,
-  int key_left,
-  int key_back,
-  int key_right,
-  int key_up,
-  int key_down
+  int window_middle_x,
+  int window_middle_y,
+  int current_mouse_x,
+  int current_mouse_y,
+  int key_pressed_forward,
+  int key_pressed_left,
+  int key_pressed_back,
+  int key_pressed_right,
+  int key_pressed_up,
+  int key_pressed_down
 );
 
 #ifdef __cplusplus
@@ -165,12 +165,12 @@ void qfpcV3Rotq(
 void quatFirstPersonCamera(
   float * cam_vec3,
   float * cam_quat,
-  int mouse_x,
-  int mouse_y,
-  int win_mid_x,
-  int win_mid_y,
   float look_mult,
   float move_mult,
+  int win_mid_x,
+  int win_mid_y,
+  int mouse_x,
+  int mouse_y,
   int key_f,
   int key_l,
   int key_b,
