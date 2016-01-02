@@ -53,11 +53,12 @@ int main()
   glGenBuffers(1, &mesh_bo);
   glBindBuffer(GL_ARRAY_BUFFER, mesh_bo);
   glBufferData(GL_ARRAY_BUFFER, sizeof(mesh), mesh, GL_STATIC_DRAW);
-  glEnableVertexAttribArray(0);
   glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 0, 0);
+  glEnableVertexAttribArray(0);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
   glClearColor(168 / 255.f, 204 / 255.f, 207 / 255.f, 1.f);
+  glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
 
   float cam_pos[3] = {};
   float cam_rot[4] = { [3] = 1.f };
@@ -109,8 +110,6 @@ int main()
     }
 
     glClear(GL_COLOR_BUFFER_BIT);
-    glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
-
     glUseProgram(program);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(mesh) / sizeof(float) / 3);
 
@@ -172,6 +171,9 @@ GLuint CreateProgram(const char * vert_filepath, const char * frag_filepath)
   
   glDetachShader(program, vert);
   glDetachShader(program, frag);
+
+  glDeleteShader(vert);
+  glDeleteShader(frag);
   
   return program;
 }
