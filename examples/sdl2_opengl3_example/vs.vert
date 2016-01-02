@@ -11,9 +11,9 @@ vec3 qrot(vec3 v, vec4 q)
   return (cross(q.xyz, cross(q.xyz, v) + (v * q.w)) * 2.f) + v;
 }
 
-vec4 proj(vec3 mv, vec4 prj)
+vec4 proj(vec3 mv, vec4 p)
 {
-  return vec4(mv.xy * prj.xy, (mv.z * prj.z) + prj.w, -mv.z);
+  return vec4(mv.xy * p.xy, (mv.z * p.z) + p.w, -mv.z);
 }
 
 layout(location = 0) uniform vec3 cam_pos;
