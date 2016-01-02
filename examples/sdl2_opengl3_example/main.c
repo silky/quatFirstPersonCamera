@@ -96,10 +96,6 @@ int main()
       key[SDL_SCANCODE_Q]
     );
 
-    glProgramUniform3fv(program, 0, 1, cam_pos);
-    glProgramUniform4fv(program, 1, 1, cam_rot);
-    glProgramUniform4fv(program, 2, 1, cam_prj);
-
     SDL_Event event;
     while(SDL_PollEvent(&event))
     {
@@ -111,7 +107,11 @@ int main()
 
     glClear(GL_COLOR_BUFFER_BIT);
     glUseProgram(program);
+    glUniform3fv(0, 1, cam_pos);
+    glUniform4fv(1, 1, cam_rot);
+    glUniform4fv(2, 1, cam_prj);
     glDrawArrays(GL_TRIANGLES, 0, sizeof(mesh) / sizeof(float) / 3);
+    glUseProgram(0);
 
     SDL_GL_SwapWindow(sdl_window);
   }
