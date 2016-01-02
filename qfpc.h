@@ -163,8 +163,8 @@ void qfpcV3Rotq(
 }
 
 void quatFirstPersonCamera(
-  float * cam_vec3_pos,
-  float * cam_quat_rot,
+  float * cam_vec3,
+  float * cam_quat,
   int mouse_x,
   int mouse_y,
   int win_mid_x,
@@ -178,36 +178,33 @@ void quatFirstPersonCamera(
   int key_u,
   int key_d)
 {
-  int mouse_diff_x = win_mid_x - mouse_x;
-  int mouse_diff_y = win_mid_y - mouse_y;
+  float mouse_x_deg = (win_mid_y - mouse_y) * look_mult;
+  float mouse_y_deg = (win_mid_x - mouse_x) * look_mult;
   
-  float cam_rot_x = mouse_diff_y * look_mult;
-  float cam_rot_y = mouse_diff_x * look_mult;
+  float x_quat[4];
+  float y_quat[4];
   
-  float rot_x[4];
-  float rot_y[4];
+  qfpcQAxisAngle(x_quat, (float[]){ 1, 0, 0 }, mouse_x_deg * QFPC_TO_RAD);
+  qfpcQAxisAngle(y_quat, (float[]){ 0, 1, 0 }, mouse_y_deg * QFPC_TO_RAD);
   
-  qfpcQAxisAngle(rot_x, (float[]){ 1, 0, 0 }, cam_rot_x * QFPC_TO_RAD);
-  qfpcQAxisAngle(rot_y, (float[]){ 0, 1, 0 }, cam_rot_y * QFPC_TO_RAD);
-  
-  qfpcQMulq(cam_quat_rot, cam_quat_rot, rot_x);
-  qfpcQMulq(cam_quat_rot, rot_y, cam_quat_rot);
+  qfpcQMulq(cam_quat, cam_quat, x_quat);
+  qfpcQMulq(cam_quat, y_quat, cam_quat);
   
   float side_vec[3];
   float   up_vec[3];
   float  dir_vec[3];
   
-  qfpcV3Rotq(side_vec, (float[]){ -1.f,  0.f,  0.f }, cam_quat_rot);
-  qfpcV3Rotq(  up_vec, (float[]){  0.f,  1.f,  0.f }, cam_quat_rot);
-  qfpcV3Rotq( dir_vec, (float[]){  0.f,  0.f, -1.f }, cam_quat_rot);
+  qfpcV3Rotq(side_vec, (float[]){ -1.f,  0.f,  0.f }, cam_quat);
+  qfpcV3Rotq(  up_vec, (float[]){  0.f,  1.f,  0.f }, cam_quat);
+  qfpcV3Rotq( dir_vec, (float[]){  0.f,  0.f, -1.f }, cam_quat);
   
   qfpcV3Mulf(side_vec, side_vec, (key_l - key_r) * move_mult);
   qfpcV3Mulf(  up_vec,   up_vec, (key_u - key_d) * move_mult);
   qfpcV3Mulf( dir_vec,  dir_vec, (key_f - key_b) * move_mult);
   
-  qfpcV3Addv(cam_vec3_pos, cam_vec3_pos, side_vec);
-  qfpcV3Addv(cam_vec3_pos, cam_vec3_pos,   up_vec);
-  qfpcV3Addv(cam_vec3_pos, cam_vec3_pos,  dir_vec);
+  qfpcV3Addv(cam_vec3, cam_vec3, side_vec);
+  qfpcV3Addv(cam_vec3, cam_vec3,   up_vec);
+  qfpcV3Addv(cam_vec3, cam_vec3,  dir_vec);
 }
 
 #endif /* QFPC_IMPLEMENTATION */
