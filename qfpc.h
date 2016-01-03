@@ -153,9 +153,9 @@ void qfpcV3Rotq(
   const float * v,
   const float * q)
 {
-  qfpcV3Cross(result, q, v);
   float temp[3];
   qfpcV3Mulf(temp, v, q[3]);
+  qfpcV3Cross(result, q, v);
   qfpcV3Addv(result, result, temp);
   qfpcV3Cross(result, q, result);
   qfpcV3Mulf(result, result, 2.f);

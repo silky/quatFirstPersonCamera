@@ -8,7 +8,7 @@ vec4 qconj(vec4 q)
 
 vec3 qrot(vec3 v, vec4 q)
 {
-  return (cross(q.xyz, cross(q.xyz, v) + (v * q.w)) * 2.f) + v;
+  return v + (2.f * cross(q.xyz, cross(q.xyz, v) + (v * q.w)));
 }
 
 vec4 proj(vec3 mv, vec4 p)
